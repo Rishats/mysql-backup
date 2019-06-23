@@ -80,16 +80,16 @@ func weekDay() rtime.Weekday {
 
 func dumpError() {
 	type Info struct {
-		Status     string
+		Status string
 	}
 
-	templateData := Info {
-		Status:     "Dump error!",
+	templateData := Info{
+		Status: "Dump error!",
 	}
 
 	funcmap := template.FuncMap{
-		"weekDay":            weekDay,
-		"hourWithMin":        hourWithMin,
+		"weekDay":     weekDay,
+		"hourWithMin": hourWithMin,
 	}
 
 	text, err := getTemplate("unsuccessful_backup.gohtml", funcmap, templateData)
@@ -102,16 +102,16 @@ func dumpError() {
 
 func dumpSuccess() {
 	type Info struct {
-		Status     string
+		Status string
 	}
 
-	templateData := Info {
-		Status:     "Dump successful!",
+	templateData := Info{
+		Status: "Dump successful!",
 	}
 
 	funcmap := template.FuncMap{
-		"weekDay":            weekDay,
-		"hourWithMin":        hourWithMin,
+		"weekDay":     weekDay,
+		"hourWithMin": hourWithMin,
 	}
 
 	text, err := getTemplate("successful_backup.gohtml", funcmap, templateData)
@@ -122,26 +122,31 @@ func dumpSuccess() {
 	sendToHorn(text)
 }
 
-func mysqlDump()  {
+func mysqlDump() {
 	// mysql_dump
 	cmd := exec.Command("mysqldump",
-		"-P" + os.Getenv("MYSQL_PORT"),
-		"-h" + os.Getenv("MYSQL_HOST"),
-		"-u" + os.Getenv("MYSQL_USER"),
-		"-p" + os.Getenv("MYSQL_PASSWORD"),
-		os.Getenv("MYSQL_DB") + "| gzip > " + os.Getenv("BACKUP_DIR") + os.Getenv("MYSQL_DB") + ".$(date +%F.%H%M%S).sql.gz")
+		"-P"+os.Getenv("MYSQL_PORT"),
+		"-h"+os.Getenv("MYSQL_HOST"),
+		"-u"+os.Getenv("MYSQL_USER"),
+		"-p"+os.Getenv("MYSQL_PASSWORD"),
+		os.Getenv("MYSQL_DB")+"| gzip > "+os.Getenv("BACKUP_DIR")+os.Getenv("MYSQL_DB")+".$(date +%F.%H%M%S).sql.gz")
 
 	_, err := cmd.StdoutPipe()
 	if err != nil {
 		raven.CaptureErrorAndWait(err, nil)
-		log.Fatal(err)
 		dumpError()
+		log.Fatal(err)
 	}
+
+	if err := cmd.Start(); err != nil {
+		dumpError()
+		log.Fatal(err)
+	}
+
 	dumpSuccess()
-	cleaner()
 }
 
-func cleaner()  {
+func cleaner() {
 	// find old files
 	// delete old file
 	// send to horn if success
@@ -175,6 +180,8 @@ func main() {
 	if appEnv == "production" {
 		raven.SetDSN(os.Getenv("SENTRY_DSN"))
 	}
+
+	makeBackup()
 
 	tasks()
 }
