@@ -17,7 +17,8 @@ Simple system which use mysqldump for dump mysql db and send info in to Telegram
     ```
 
 4) Configure your .env
-    ```APP_ENV=production-or-other
+    ```
+       APP_ENV=production-or-other
        MYSQL_HOST=127.0.0.1
        MYSQL_PORT=3306
        MYSQL_DB=mydb
@@ -26,7 +27,7 @@ Simple system which use mysqldump for dump mysql db and send info in to Telegram
        BACKUP_DIR=/home/vagrant/backups/mysql/
        INTEGRAM_WEBHOOK_URI=your-uri
        SENTRY_DSN=your-dsn
-       ```
+    ```
 
 ### Running
 
