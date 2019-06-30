@@ -49,13 +49,14 @@ env GOOS=linux GOARCH=amd64 go build main.go
     ```
     ```
     [Unit]
-    Description=Simple mysqlbackup system written on Go by Rishat Sultanov
+    Description=Simple mysql-backup system written on Go by Rishat Sultanov
     
     [Service]
     Type=simple
     Restart=always
     RestartSec=5s
-    ExecStart=/home/vagrant/mysql-backup/main
+    WorkingDirectory=/home/vagrant/code/go/mysql-backup
+    ExecStart=/home/vagrant/code/go/mysql-backup/go_build_main_go_linux
     
     [Install]
     WantedBy=multi-user.target
@@ -75,17 +76,22 @@ env GOOS=linux GOARCH=amd64 go build main.go
     ```
     Example output:
     ```
-    ● mysqlbackup.service - mysqlbackup
-       Loaded: loaded (/lib/systemd/system/mysqlbackup.service; enabled; vendor preset: enabled)
-       Active: active (running) since Wed 2018-12-06 21:00:01 UTC; 12min ago
-     Main PID: 24735 (acj)
-        Tasks: 3 (limit: 4915)
-       Memory: 1.8M
-          CPU: 20ms
+    ● mysqlbackup.service - Simple mysql-backup system written on Go by Rishat Sultanov
+       Loaded: loaded (/lib/systemd/system/mysqlbackup.service; disabled; vendor preset: enabled)
+       Active: active (running) since Sun 2019-06-30 08:58:00 UTC; 1min 30s ago
+     Main PID: 6418 (go_build_main_g)
+        Tasks: 4
+       Memory: 12.9M
+          CPU: 154ms
        CGroup: /system.slice/mysqlbackup.service
-               └─24735 /home/vagrant/mysql-backup
+               └─6418 /home/vagrant/code/go/mysql-backup/go_build_main_go_linux
     
-    Dec 06 21:00:01 serenity systemd[1]: Started mysqlbackup.
+    Jun 30 08:58:00 homestead systemd[1]: mysqlbackup.service: Service hold-off time over, scheduling restart.
+    Jun 30 08:58:00 homestead systemd[1]: Stopped Simple mysql-backup system written on Go by Rishat Sultanov.
+    Jun 30 08:58:00 homestead systemd[1]: Started Simple mysql-backup system written on Go by Rishat Sultanov.
+    Jun 30 08:58:00 homestead go_build_main_go_linux[6418]: Output: 0
+    Jun 30 08:58:01 homestead go_build_main_go_linux[6418]: &{200 OK 200 HTTP/2.0 2 0 map[Content-Length:[0] Content-Type:[text/plain; charset=utf-8] Date:[Su
+    Jun 30 08:58:01 homestead go_build_main_go_linux[6418]: 2019-07-01 02:00:00 +0000 UTC
     
     ```
 ## Versioning
