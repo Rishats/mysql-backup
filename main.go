@@ -281,5 +281,11 @@ func main() {
 		raven.SetDSN(os.Getenv("SENTRY_DSN"))
 	}
 
+	appForceBackup := os.Getenv("FORCE_BACKUP")
+
+	if appForceBackup == "ENABLE"{
+		mysqlDump()
+	}
+
 	tasks()
 }
